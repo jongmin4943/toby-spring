@@ -11,13 +11,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 public class DataSourceTest {
 
     final String username = "root";
-    final String password = "root123";
-    final String url = "jdbc:mysql://localhost/springbook";
+    final String password = "root";
+    final String url = "jdbc:mysql://localhost/tobi";
     final Class<Driver> driverClass = com.mysql.cj.jdbc.Driver.class;
 
     @DisplayName("데이터베이스 컨넥션 테스트")
     @Test
-    public void 데이터컨넥션_테스트() throws SQLException {
+    public void databaseConnectionTest() throws SQLException {
         final SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriverClass(driverClass);
         dataSource.setUrl(this.url);
