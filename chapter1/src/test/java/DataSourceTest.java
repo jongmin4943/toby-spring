@@ -1,6 +1,6 @@
-import com.mysql.cj.jdbc.Driver;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mariadb.jdbc.Driver;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import java.sql.Connection;
@@ -12,8 +12,8 @@ public class DataSourceTest {
 
     final String username = "root";
     final String password = "root";
-    final String url = "jdbc:mysql://localhost/tobi";
-    final Class<Driver> driverClass = com.mysql.cj.jdbc.Driver.class;
+    final String url = "jdbc:mariadb://localhost/tobi";
+    final Class<Driver> driverClass = org.mariadb.jdbc.Driver.class;
 
     @DisplayName("데이터베이스 컨넥션 테스트")
     @Test
