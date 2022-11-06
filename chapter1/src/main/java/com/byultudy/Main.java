@@ -1,5 +1,7 @@
 package com.byultudy;
 
+import com.byultudy.user.dao.ConnectionMaker;
+import com.byultudy.user.dao.DConnectionMaker;
 import com.byultudy.user.dao.UserDao;
 import com.byultudy.user.domain.User;
 
@@ -7,8 +9,8 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-
-        UserDao dao = new UserDao();
+        ConnectionMaker connectionMaker = new DConnectionMaker();
+        UserDao dao = new UserDao(connectionMaker);
 
         User user = new User();
         user.setId("min");
