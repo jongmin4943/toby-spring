@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SimpleConnectionMaker {
+public class DConnectionMaker implements ConnectionMaker {
     private final String username = "root";
     private final String password = "root";
     private final String url = "jdbc:mariadb://localhost/tobi";
