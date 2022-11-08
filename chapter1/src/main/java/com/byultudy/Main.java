@@ -1,16 +1,18 @@
 package com.byultudy;
 
-import com.byultudy.user.dao.CountingConnectionMaker;
+import com.byultudy.user.dao.DaoFactory;
 import com.byultudy.user.dao.UserDao;
 import com.byultudy.user.domain.User;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
 import java.sql.SQLException;
 
 public class Main {
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
+    public static void main(String[] args) throws SQLException {
         ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+//        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
 
         UserDao dao = context.getBean("userDao", UserDao.class);
 
@@ -27,9 +29,6 @@ public class Main {
         System.out.println(user2.getName());
         System.out.println(user2.getPassword());
         System.out.println(user2.getId() + "조회 성공");
-
-        CountingConnectionMaker ccm = context.getBean("countingConnectionMaker", CountingConnectionMaker.class);
-        System.out.println("Connection counter : " + ccm.getCounter());
 
     }
 }
