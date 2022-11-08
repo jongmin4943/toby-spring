@@ -14,7 +14,9 @@ public class CountingDaoFactory {
 
     @Bean
     public ConnectionMaker connectionMaker() {
-        return new CountingConnectionMaker(realConnectionMaker());
+        CountingConnectionMaker countingConnectionMaker = new CountingConnectionMaker();
+        countingConnectionMaker.setConnectionMaker(realConnectionMaker());
+        return countingConnectionMaker;
     }
 
     @Bean

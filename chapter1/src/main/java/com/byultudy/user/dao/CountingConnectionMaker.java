@@ -5,9 +5,9 @@ import java.sql.SQLException;
 
 public class CountingConnectionMaker implements ConnectionMaker{
     private int counter = 0;
-    private final ConnectionMaker connectionMaker;
+    private ConnectionMaker connectionMaker;
 
-    public CountingConnectionMaker(final ConnectionMaker connectionMaker) {
+    public void setConnectionMaker(final ConnectionMaker connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
 
