@@ -15,6 +15,7 @@ subprojects {
         /* Test */
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+        testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.7.0'
 
         /* Spring */
         implementation 'org.springframework:spring-orm:4.0.3.RELEASE'
