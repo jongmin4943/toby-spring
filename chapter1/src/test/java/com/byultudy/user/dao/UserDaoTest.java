@@ -3,31 +3,34 @@ package com.byultudy.user.dao;
 import com.byultudy.user.domain.User;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
 public class UserDaoTest {
-    @Autowired
     private UserDao dao;
     private User user1;
     private User user2;
     private User user3;
     @Before
     public void setUp() {
+        String username = "root";
+        String password = "root";
+        String url = "jdbc:mariadb://localhost/testdb";
         this.user1 = new User("test1", "테스터1", "test");
         this.user2 = new User("test2", "테스터2", "test");
         this.user3 = new User("test3", "테스터3", "test");
+        dao = new UserDao();
+        DataSource dataSource = new SingleConnectionDataSource(
+                url, username, password, true
+        );
+        dao.setDataSource(dataSource);
     }
 
     @Test
