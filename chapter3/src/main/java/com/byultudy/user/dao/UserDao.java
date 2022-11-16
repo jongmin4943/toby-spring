@@ -15,6 +15,9 @@ public class UserDao {
 
     private JdbcContext jdbcContext;
 
+    public void setJdbcContext(final JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
     public void setDataSource(final DataSource dataSource) {
         this.jdbcContext = new JdbcContext();
         this.jdbcContext.setDataSource(dataSource);
