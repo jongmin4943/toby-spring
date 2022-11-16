@@ -15,9 +15,6 @@ public class UserDao {
 
     private JdbcContext jdbcContext;
 
-    public void setJdbcContext(final JdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
-    }
     public void setDataSource(final DataSource dataSource) {
         this.jdbcContext = new JdbcContext();
         this.jdbcContext.setDataSource(dataSource);
@@ -60,7 +57,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        this.jdbcContext.workWithStatementStrategy((c)->c.prepareStatement("delete from users"));
+        this.jdbcContext.executeSql("delete from users");
     }
 
     public int getCount() throws SQLException {

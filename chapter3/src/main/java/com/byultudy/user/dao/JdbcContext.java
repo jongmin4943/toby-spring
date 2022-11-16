@@ -21,4 +21,8 @@ public class JdbcContext {
             throw e;
         }
     }
+
+    public void executeSql(final String query) throws SQLException {
+        this.workWithStatementStrategy((c)->c.prepareStatement(query));
+    }
 }
