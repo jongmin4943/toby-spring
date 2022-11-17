@@ -21,6 +21,10 @@ public class UserDao {
         this.dataSource = dataSource;
     }
 
+    public void setJdbcContext(final JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
+    }
+
     public void add(User user) throws SQLException {
         this.jdbcContext.workWithStatementStrategy((c)->{
             PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values (?,?,?)");
@@ -69,4 +73,5 @@ public class UserDao {
             throw e;
         }
     }
+
 }
