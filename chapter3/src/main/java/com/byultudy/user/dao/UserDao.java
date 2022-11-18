@@ -1,14 +1,9 @@
 package com.byultudy.user.dao;
 
 import com.byultudy.user.domain.User;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class UserDao {
 
@@ -31,28 +26,14 @@ public class UserDao {
     }
 
 
-    public User get(String id) throws SQLException {
-        Connection c = dataSource.getConnection();
-
-        PreparedStatement ps = c.prepareStatement(
-                "select * from users where id = ?"
-        );
-        ps.setString(1, id);
-
-        ResultSet rs = ps.executeQuery();
-        User user = null;
-        if (rs.next()) {
-            user = new User();
+    public User get(String id) {
+        return this.jdbcTemplate.queryForObject("select * from users where id = ?", new Object[]{id}, (rs, rowNum) -> {
+            User user = new User();
             user.setId(rs.getString("id"));
             user.setName(rs.getString("name"));
             user.setPassword(rs.getString("password"));
-        }
-        rs.close();
-        ps.close();
-        c.close();
-        if (user == null)
-            throw new EmptyResultDataAccessException(1);
-        return user;
+            return user;
+        });
     }
 
     public void deleteAll() {
