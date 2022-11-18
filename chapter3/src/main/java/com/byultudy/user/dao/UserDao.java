@@ -59,14 +59,8 @@ public class UserDao {
         this.jdbcTemplate.update("delete from users");
     }
 
-    public int getCount() throws SQLException {
-        try (Connection c = dataSource.getConnection(); PreparedStatement ps = c.prepareStatement("select count(*) from users");
-             ResultSet rs = ps.executeQuery()) {
-            rs.next();
-            return rs.getInt(1);
-        } catch (SQLException e) {
-            throw e;
-        }
+    public int getCount() {
+        return this.jdbcTemplate.queryForInt("select count(*) from users");
     }
 
 }
