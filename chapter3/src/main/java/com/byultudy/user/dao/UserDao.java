@@ -2,19 +2,24 @@ package com.byultudy.user.dao;
 
 import com.byultudy.user.domain.User;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import javax.sql.DataSource;
 import java.util.List;
 
 public class UserDao {
 
-    private DataSource dataSource;
-
+    private final RowMapper<User> userRowMapper = (rs, rowNum) -> {
+        User user = new User();
+        user.setId(rs.getString("id"));
+        user.setName(rs.getString("name"));
+        user.setPassword(rs.getString("password"));
+        return user;
+    };
     private JdbcTemplate jdbcTemplate;
 
     public void setDataSource(final DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
-        this.dataSource = dataSource;
     }
 
     public void add(User user) {
@@ -28,13 +33,7 @@ public class UserDao {
 
 
     public User get(String id) {
-        return this.jdbcTemplate.queryForObject("select * from users where id = ?", new Object[]{id}, (rs, rowNum) -> {
-            User user = new User();
-            user.setId(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            user.setPassword(rs.getString("password"));
-            return user;
-        });
+        return this.jdbcTemplate.queryForObject("select * from users where id = ?", new Object[]{id}, userRowMapper);
     }
 
     public void deleteAll() {
@@ -46,12 +45,6 @@ public class UserDao {
     }
 
     public List<User> getAll() {
-        return this.jdbcTemplate.query("select * from users order by id", (rs, rowNum) -> {
-            User user = new User();
-            user.setId(rs.getString("id"));
-            user.setName(rs.getString("name"));
-            user.setPassword(rs.getString("password"));
-            return user;
-        });
+        return this.jdbcTemplate.query("select * from users order by id", userRowMapper);
     }
 }
