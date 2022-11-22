@@ -1,8 +1,7 @@
 package com.byultudy.user.dao;
 
 import com.byultudy.user.domain.User;
-import org.springframework.dao.DataAccessException;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -25,6 +24,7 @@ public class UserDao {
     }
 
     public void add(User user) throws DuplicateUserIdException {
+        // 291 page
         try {
             this.jdbcTemplate.update(
                     "insert into users(id, name, password) values (?,?,?)",
@@ -32,11 +32,8 @@ public class UserDao {
                     user.getName(),
                     user.getPassword()
             );
-        } catch (DataAccessException e) {
-            if(e.getClass().equals(DataIntegrityViolationException.class)) {
-                throw new DuplicateUserIdException(e);
-            }
-            throw e;
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateUserIdException(e);
         }
 
     }
