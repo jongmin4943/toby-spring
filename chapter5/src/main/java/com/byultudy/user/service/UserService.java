@@ -33,4 +33,11 @@ public class UserService {
             }
         }
     }
+
+    public void add(final User user) {
+        if (user.getLevel() == null) {
+            user.setLevel(Level.BASIC);
+        }
+        userDao.add(user);
+    }
 }
