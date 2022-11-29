@@ -7,7 +7,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.List;
+import java.util.Properties;
 
 public class UserService {
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
@@ -44,6 +51,25 @@ public class UserService {
     protected void upgradeLevel(final User user) {
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeEmail(user);
+    }
+
+    private void sendUpgradeEmail(final User user) {
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "mail.ksug.org");
+        Session s = Session.getInstance(properties, null);
+
+        MimeMessage message = new MimeMessage(s);
+        try {
+            message.setFrom(new InternetAddress("test@test.com"));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress("test@test.com"));
+            message.setSubject("Upgrade 안내");
+            message.setText("등급이 " + user.getLevel().name() + "로 올랐습니다.");
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private boolean canUpgradeLevel(final User user) {
