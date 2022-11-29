@@ -3,18 +3,13 @@ package com.byultudy.user.service;
 import com.byultudy.user.dao.UserDao;
 import com.byultudy.user.domain.Level;
 import com.byultudy.user.domain.User;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import java.util.List;
-import java.util.Properties;
 
 public class UserService {
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
@@ -23,12 +18,18 @@ public class UserService {
 
     private PlatformTransactionManager transactionManager;
 
+    private MailSender mailSender;
+
     public void setUserDao(final UserDao userDao) {
         this.userDao = userDao;
     }
 
     public void setTransactionManager(final PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
+    }
+
+    public void setMailSender(final MailSender mailSender) {
+        this.mailSender = mailSender;
     }
 
     public void upgradeLevels() {
@@ -55,21 +56,13 @@ public class UserService {
     }
 
     private void sendUpgradeEmail(final User user) {
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "mail.ksug.org");
-        Session s = Session.getInstance(properties, null);
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setFrom("test@test.com");
+        mailMessage.setSubject("Upgrade 안내");
+        mailMessage.setText("등급이 " + user.getLevel().name() + "로 올랐습니다.");
 
-        MimeMessage message = new MimeMessage(s);
-        try {
-            message.setFrom(new InternetAddress("test@test.com"));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress("test@test.com"));
-            message.setSubject("Upgrade 안내");
-            message.setText("등급이 " + user.getLevel().name() + "로 올랐습니다.");
-
-            Transport.send(message);
-        } catch (MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        mailSender.send(mailMessage);
     }
 
     private boolean canUpgradeLevel(final User user) {
