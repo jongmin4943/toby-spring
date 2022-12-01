@@ -4,22 +4,25 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-        <property name="driverClass" value="org.mariadb.jdbc.Driver" />
-        <property name="url" value="jdbc:mariadb://localhost/testdb" />
-        <property name="username" value="root" />
-        <property name="password" value="root" />
+        <property name="driverClass" value="org.mariadb.jdbc.Driver"/>
+        <property name="url" value="jdbc:mariadb://localhost/testdb"/>
+        <property name="username" value="root"/>
+        <property name="password" value="root"/>
     </bean>
-    <bean id="userService" class="com.byultudy.user.service.UserService" >
-        <property name="userDao" ref="userDao" />
-        <property name="transactionManager" ref="transactionManager" />
-        <property name="mailSender" ref="mailSender" />
+    <bean id="userServiceImpl" class="com.byultudy.user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao"/>
+        <property name="mailSender" ref="mailSender"/>
     </bean>
-    <bean id="userDao" class="com.byultudy.user.dao.UserDaoJdbc" >
-        <property name="dataSource" ref="dataSource" />
+    <bean id="userService" class="com.byultudy.user.service.UserServiceTx">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="userServiceImpl"/>
     </bean>
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager" >
-        <property name="dataSource" ref="dataSource" />
+    <bean id="userDao" class="com.byultudy.user.dao.UserDaoJdbc">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="mailSender" class="com.byultudy.user.service.DummyMailSender" >
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="mailSender" class="com.byultudy.user.service.DummyMailSender">
     </bean>
 </beans>
