@@ -1,7 +1,7 @@
 package com.byultudy.user.service;
 
 
-import com.byultudy.proxy.TransactionHandler;
+import com.byultudy.proxy.TxProxyFactoryBean;
 import com.byultudy.user.dao.DuplicateUserIdException;
 import com.byultudy.user.dao.UserDao;
 import com.byultudy.user.domain.Level;
@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -19,7 +20,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,6 +48,8 @@ public class UserServiceTest {
 
     @Autowired
     private MailSender mailSender;
+    @Autowired
+    private ApplicationContext context;
 
     List<User> users;
 
@@ -111,22 +113,18 @@ public class UserServiceTest {
     }
 
     @Test
-    public void upgradeAllOrNothing() {
+    @DirtiesContext
+    public void upgradeAllOrNothing() throws Exception {
         UserServiceImpl testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
         testUserService.setMailSender(this.mailSender);
 
-        TransactionHandler txHandler = new TransactionHandler();
+        TxProxyFactoryBean transactionProxyFactoryBean =
+                context.getBean("&userService", TxProxyFactoryBean.class);
 
-        txHandler.setTarget(testUserService);
-        txHandler.setTransactionManager(transactionManager);
-        txHandler.setPattern("upgradeLevels");
+        transactionProxyFactoryBean.setTarget(testUserService);
 
-        UserService userServiceTx = (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class[]{UserService.class},
-                txHandler
-        ) ;
+        UserService userServiceTx = (UserService) transactionProxyFactoryBean.getObject();
 
         userDao.deleteAll();
         for (User user : users) {
