@@ -1,7 +1,6 @@
 package com.byultudy.user.service;
 
 
-import com.byultudy.proxy.TxProxyFactoryBean;
 import com.byultudy.user.dao.DuplicateUserIdException;
 import com.byultudy.user.dao.UserDao;
 import com.byultudy.user.domain.Level;
@@ -10,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
@@ -119,8 +119,8 @@ public class UserServiceTest {
         testUserService.setUserDao(this.userDao);
         testUserService.setMailSender(this.mailSender);
 
-        TxProxyFactoryBean transactionProxyFactoryBean =
-                context.getBean("&userService", TxProxyFactoryBean.class);
+        ProxyFactoryBean transactionProxyFactoryBean =
+                context.getBean("&userService", ProxyFactoryBean.class);
 
         transactionProxyFactoryBean.setTarget(testUserService);
 
