@@ -9,23 +9,22 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.PlatformTransactionManager;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.byultudy.user.service.UserServiceImpl.MIN_LOGCOUNT_FOR_SILVER;
 import static com.byultudy.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.fail;
@@ -39,17 +38,10 @@ public class UserServiceTest {
     @Autowired
     UserService userService;
     @Autowired
-    UserServiceImpl userServiceImpl;
+    UserService testUserService;
 
     @Autowired
     private UserDao userDao;
-    @Autowired
-    private PlatformTransactionManager transactionManager;
-
-    @Autowired
-    private MailSender mailSender;
-    @Autowired
-    private ApplicationContext context;
 
     List<User> users;
 
@@ -114,25 +106,14 @@ public class UserServiceTest {
 
     @Test
     @DirtiesContext
-    public void upgradeAllOrNothing() throws Exception {
-        UserServiceImpl testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-        testUserService.setMailSender(this.mailSender);
-
-        ProxyFactoryBean transactionProxyFactoryBean =
-                context.getBean("&userService", ProxyFactoryBean.class);
-
-        transactionProxyFactoryBean.setTarget(testUserService);
-
-        UserService userServiceTx = (UserService) transactionProxyFactoryBean.getObject();
-
+    public void upgradeAllOrNothing() {
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
         }
 
         try {
-            userServiceTx.upgradeLevels();
+            testUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch (Exception ignored) {
 
@@ -164,8 +145,6 @@ public class UserServiceTest {
         List<SimpleMailMessage> mailMessages = mailMessageArgumentCaptor.getAllValues();
         assertThat(mailMessages.get(0).getTo()[0], is(users.get(1).getEmail()));
         assertThat(mailMessages.get(1).getTo()[0], is(users.get(3).getEmail()));
-
-
     }
 
     private void checkLevel(final User user, final boolean upgraded) {
@@ -177,12 +156,13 @@ public class UserServiceTest {
         }
     }
 
-    static class TestUserService extends UserServiceImpl {
-        private final String id;
+    @Test
+    public void advisorAutoProxyCreator() {
+        assertThat(testUserService, instanceOf(Proxy.class));
+    }
 
-        private TestUserService(String id) {
-            this.id = id;
-        }
+    static class TestUserServiceImpl extends UserServiceImpl {
+        private final String id = "test4";
 
         protected void upgradeLevel(User user) {
             if (user.getId().equals(this.id)) {

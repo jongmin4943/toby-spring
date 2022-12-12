@@ -9,18 +9,11 @@
         <property name="username" value="root"/>
         <property name="password" value="root"/>
     </bean>
-    <bean id="userServiceImpl" class="com.byultudy.user.service.UserServiceImpl">
+    <bean id="userService" class="com.byultudy.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
     </bean>
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="userServiceImpl"/>
-        <property name="interceptorNames">
-            <list>
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
-    </bean>
+    <bean id="testUserService" class="com.byultudy.user.service.UserServiceTest$TestUserServiceImpl" parent="userService" />
     <bean id="userDao" class="com.byultudy.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
     </bean>
@@ -37,11 +30,14 @@
     <bean id="transactionAdvise" class="com.byultudy.jdk.TransactionAdvise">
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
-    <bean id="transactionPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+    <bean id="transactionPointCut" class="com.byultudy.proxy.NameMatchClassMethodPointcut">
+        <property name="mappedClassName" value="*ServiceImpl"/>
         <property name="mappedName" value="upgrade*"/>
     </bean>
     <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
         <property name="advice" ref="transactionAdvise"/>
         <property name="pointcut" ref="transactionPointCut"/>
     </bean>
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" />
+
 </beans>
