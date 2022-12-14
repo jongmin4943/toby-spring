@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -27,6 +28,7 @@ import static com.byultudy.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
@@ -161,6 +163,13 @@ public class UserServiceTest {
         assertThat(testUserService, instanceOf(Proxy.class));
     }
 
+    @Test
+    public void readOnlyTransactionAttribute() {
+        assertThrows(TransientDataAccessResourceException.class, () -> {
+            testUserService.getAll();
+        });
+    }
+
     static class TestUserServiceImpl extends UserServiceImpl {
         private final String id = "test4";
 
@@ -169,6 +178,14 @@ public class UserServiceTest {
                 throw new TestUserServiceException();
             }
             super.upgradeLevel(user);
+        }
+
+        @Override
+        public List<User> getAll() {
+            for (User user : super.getAll()) {
+                super.update(user);
+            }
+            return null;
         }
     }
 
