@@ -6,19 +6,26 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
+import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class XmlSqlService implements SqlService{
     private final Map<String, String> sqlMap = new HashMap<>();
+    private String sqlmapFile;
 
-    public XmlSqlService() {
+    public void setSqlmapFile(final String sqlmapFile) {
+        this.sqlmapFile = sqlmapFile;
+    }
+
+    @PostConstruct
+    private void loadSql() {
         String contextPath = Sqlmap.class.getPackage().getName();
         try {
             JAXBContext context = JAXBContext.newInstance(contextPath);
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            InputStream is = getClass().getResourceAsStream("/sqlmap.xml");
+            InputStream is = getClass().getResourceAsStream(this.sqlmapFile);
             Sqlmap sqlmap = (Sqlmap) unmarshaller.unmarshal(is);
 
             for (SqlType sql: sqlmap.getSql()) {

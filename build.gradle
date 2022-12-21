@@ -51,6 +51,8 @@ subprojects {
         implementation 'org.aspectj:aspectjtools:1.6.7'
         testImplementation 'com.h2database:h2:1.3.172'
 
+        implementation "javax.annotation:javax.annotation-api:1.3.2"
+
     }
 
     test {
