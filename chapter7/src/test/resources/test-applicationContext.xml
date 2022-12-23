@@ -24,6 +24,11 @@
     </tx:advice>
     <tx:annotation-driven />
     <context:annotation-config />
+    <bean id="sqlService" class="com.byultudy.user.sqlService.XmlSqlService">
+        <property name="sqlRegistry" ref="sqlService" />
+        <property name="sqlReader" ref="sqlService" />
+        <property name="sqlmapFile" value="/sqlmap.xml" />
+    </bean>
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.mariadb.jdbc.Driver"/>
         <property name="url" value="jdbc:mariadb://localhost/testdb"/>
@@ -39,9 +44,7 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="sqlService" ref="sqlService"/>
     </bean>
-    <bean id="sqlService" class="com.byultudy.user.sqlService.XmlSqlService">
-        <property name="sqlmapFile" value="/sqlmap.xml" />
-    </bean>
+
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>

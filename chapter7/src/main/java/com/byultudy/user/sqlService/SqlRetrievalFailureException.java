@@ -8,4 +8,8 @@ public class SqlRetrievalFailureException extends RuntimeException{
     public SqlRetrievalFailureException(final String message, final Throwable cause) {
         super(message, cause);
     }
+
+    public SqlRetrievalFailureException(final Throwable cause) {
+        super(cause);
+    }
 }
