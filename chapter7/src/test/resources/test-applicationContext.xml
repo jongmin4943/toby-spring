@@ -24,7 +24,12 @@
     </tx:advice>
     <tx:annotation-driven />
     <context:annotation-config />
-    <bean id="sqlService" class="com.byultudy.user.sqlService.DefaultSqlService">
+    <bean id="sqlService" class="com.byultudy.user.sqlService.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller" />
+    </bean>
+
+    <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="contextPath" value="C:\workspace\study\spring\chapter7\src\main\java\com\byultudy\user\sqlService\jaxb"/>
     </bean>
     <bean id="sqlReader" class="com.byultudy.user.sqlService.JaxbXmlSqlReader">
         <property name="sqlmapFile" value="/sqlmap.xml" />
