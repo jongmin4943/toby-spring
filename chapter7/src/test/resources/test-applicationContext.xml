@@ -26,6 +26,7 @@
     <context:annotation-config />
     <bean id="sqlService" class="com.byultudy.user.sqlService.OxmSqlService">
         <property name="unmarshaller" ref="unmarshaller" />
+        <property name="sqlmap" value="./sqlmap.xml" />
     </bean>
 
     <bean id="unmarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
