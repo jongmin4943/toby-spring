@@ -1,6 +1,7 @@
 package com.byultudy.user.service;
 
 
+import com.byultudy.user.TestApplicationContext;
 import com.byultudy.user.dao.DuplicateUserIdException;
 import com.byultudy.user.dao.UserDao;
 import com.byultudy.user.domain.Level;
@@ -10,7 +11,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.TransientDataAccessResourceException;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -31,13 +31,11 @@ import static com.byultudy.user.service.UserServiceImpl.MIN_RECOMMEND_FOR_GOLD;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
-@DirtiesContext
+@ContextConfiguration(classes= TestApplicationContext.class)
 public class UserServiceTest {
 
     @Autowired
@@ -178,7 +176,7 @@ public class UserServiceTest {
         userService.add(users.get(1));
     }
 
-    static class TestUserServiceImpl extends UserServiceImpl {
+    public static class TestUserService extends UserServiceImpl {
         private final String id = "test4";
 
         protected void upgradeLevel(User user) {
