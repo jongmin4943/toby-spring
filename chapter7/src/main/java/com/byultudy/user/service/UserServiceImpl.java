@@ -5,9 +5,11 @@ import com.byultudy.user.domain.Level;
 import com.byultudy.user.domain.User;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service("userService")
 public class UserServiceImpl implements UserService {
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
     public static final int MIN_RECOMMEND_FOR_GOLD = 30;

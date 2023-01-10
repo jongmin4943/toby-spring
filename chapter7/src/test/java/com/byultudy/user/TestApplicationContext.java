@@ -1,10 +1,8 @@
 package com.byultudy.user;
 
 import com.byultudy.user.dao.UserDao;
-import com.byultudy.user.dao.UserDaoJdbc;
 import com.byultudy.user.service.DummyMailSender;
 import com.byultudy.user.service.UserService;
-import com.byultudy.user.service.UserServiceImpl;
 import com.byultudy.user.service.UserServiceTest;
 import com.byultudy.user.sqlService.OxmSqlService;
 import com.byultudy.user.sqlService.SqlRegistry;
@@ -12,6 +10,7 @@ import com.byultudy.user.sqlService.SqlService;
 import com.byultudy.user.sqlService.updatable.EmbeddedDbSqlRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
@@ -28,6 +27,7 @@ import java.sql.Driver;
 
 @Configuration
 @EnableTransactionManagement
+@ComponentScan(basePackages="com.byultudy.user")
 public class TestApplicationContext {
     /**
      * DB연결과 트랜잭션
@@ -54,29 +54,12 @@ public class TestApplicationContext {
      * 애플리케이션 로직 & 테스트용 빈
      */
 
-    @Autowired
-    SqlService sqlService;
-
-    @Bean
-    public UserDao userDao() {
-        UserDaoJdbc dao = new UserDaoJdbc();
-        dao.setDataSource(dataSource());
-        dao.setSqlService(this.sqlService);
-        return dao;
-    }
-
-    @Bean
-    public UserService userService() {
-        UserServiceImpl service = new UserServiceImpl();
-        service.setUserDao(userDao());
-        service.setMailSender(mailSender());
-        return service;
-    }
+    @Autowired UserDao userDao;
 
     @Bean
     public UserService testUserService() {
         UserServiceTest.TestUserService testService = new UserServiceTest.TestUserService();
-        testService.setUserDao(userDao());
+        testService.setUserDao(this.userDao);
         testService.setMailSender(mailSender());
         return testService;
     }

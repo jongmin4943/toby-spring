@@ -3,14 +3,18 @@ package com.byultudy.user.dao;
 import com.byultudy.user.domain.Level;
 import com.byultudy.user.domain.User;
 import com.byultudy.user.sqlService.SqlService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.util.List;
 
+@Repository
 public class UserDaoJdbc implements UserDao {
 
+   @Autowired
     private SqlService sqlService;
 
     private final RowMapper<User> userRowMapper = (rs, rowNum) -> {
@@ -26,6 +30,7 @@ public class UserDaoJdbc implements UserDao {
     };
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public void setDataSource(final DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
